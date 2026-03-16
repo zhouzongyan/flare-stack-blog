@@ -1,30 +1,23 @@
-import { z } from "zod";
 import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
-import {
-  FindPostByIdInputSchema,
-  PostSelectSchema,
-} from "@/features/posts/schema/posts.schema";
 import * as PostService from "@/features/posts/services/posts.service";
-import { TagSelectSchema } from "@/features/tags/tags.schema";
-import { defineMcpTool } from "../mcp-tool";
+import { defineMcpTool } from "../../../service/mcp-tool";
+import {
+  McpPostByIdInputSchema,
+  McpPostDetailSchema,
+} from "../schema/mcp-posts.schema";
+import { serializeMcpPostDetail } from "../service/mcp-posts.service";
 
 const POSTS_GET_REQUIRED_SCOPES: OAuthScopeRequest = {
   posts: ["read"],
 };
-
-const PostsGetOutputSchema = PostSelectSchema.extend({
-  hasPublicCache: z.boolean(),
-  isSynced: z.boolean(),
-  tags: z.array(TagSelectSchema).optional(),
-});
 
 export const postsGetTool = defineMcpTool({
   name: "posts.get",
   description:
     "Get a single blog post by numeric ID, including tags and sync metadata.",
   requiredScopes: POSTS_GET_REQUIRED_SCOPES,
-  inputSchema: FindPostByIdInputSchema,
-  outputSchema: PostsGetOutputSchema,
+  inputSchema: McpPostByIdInputSchema,
+  outputSchema: McpPostDetailSchema,
   async handler(args, context) {
     const post = await PostService.findPostById(context, args);
 
@@ -40,14 +33,16 @@ export const postsGetTool = defineMcpTool({
       };
     }
 
+    const serializedPost = serializeMcpPostDetail(post);
+
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(post, null, 2),
+          text: JSON.stringify(serializedPost, null, 2),
         },
       ],
-      structuredContent: post,
+      structuredContent: serializedPost,
     };
   },
 });

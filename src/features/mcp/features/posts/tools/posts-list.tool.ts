@@ -1,29 +1,27 @@
-import { z } from "zod";
 import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
-import {
-  GetPostsInputSchema,
-  PostItemSchema,
-} from "@/features/posts/schema/posts.schema";
 import * as PostService from "@/features/posts/services/posts.service";
-import { defineMcpTool } from "../mcp-tool";
+import { defineMcpTool } from "../../../service/mcp-tool";
+import {
+  McpPostsListInputSchema,
+  McpPostsListOutputSchema,
+} from "../schema/mcp-posts.schema";
+import { serializeMcpPostListItem } from "../service/mcp-posts.service";
 
 const POSTS_LIST_REQUIRED_SCOPES: OAuthScopeRequest = {
   posts: ["read"],
 };
-
-const PostsListOutputSchema = z.object({
-  items: z.array(PostItemSchema),
-});
 
 export const postsListTool = defineMcpTool({
   name: "posts.list",
   description:
     "List blog posts with optional filters for admin-style management.",
   requiredScopes: POSTS_LIST_REQUIRED_SCOPES,
-  inputSchema: GetPostsInputSchema,
-  outputSchema: PostsListOutputSchema,
+  inputSchema: McpPostsListInputSchema,
+  outputSchema: McpPostsListOutputSchema,
   async handler(args, context) {
-    const items = await PostService.getPosts(context, args);
+    const items = (await PostService.getPosts(context, args)).map(
+      serializeMcpPostListItem,
+    );
 
     return {
       content: [
