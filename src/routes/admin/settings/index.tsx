@@ -75,7 +75,7 @@ function RouteComponent() {
     {
       value: "integrations",
       icon: KeyRound,
-      label: "MCP",
+      label: m.settings_tab_mcp(),
     },
   ] as const;
 
@@ -230,11 +230,10 @@ function RouteComponent() {
             <TabsContent value="integrations" className="mt-0 space-y-10">
               <div className="space-y-2 pb-6 border-b border-border/30">
                 <h2 className="text-2xl font-serif font-medium tracking-tight">
-                  MCP
+                  {m.settings_mcp_title()}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Review which AI clients have connected to your MCP server and
-                  control their granted scopes.
+                  {m.settings_mcp_desc()}
                 </p>
               </div>
               <OAuthClientsSection />

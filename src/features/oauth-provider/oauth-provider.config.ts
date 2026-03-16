@@ -35,6 +35,7 @@ export const OAUTH_STANDARD_SCOPES = [...OAUTH_STANDARD_SCOPE_VALUES];
 export const OAUTH_BLOG_SCOPES = flattenBlogScopeGroups(
   OAUTH_BLOG_SCOPE_GROUPS,
 );
+export const OAUTH_MANAGED_SCOPES: OAuthBlogScope[] = [...OAUTH_BLOG_SCOPES];
 export const OAUTH_PROVIDER_SCOPES: OAuthScope[] = [
   ...OAUTH_STANDARD_SCOPE_VALUES,
   ...OAUTH_BLOG_SCOPES,
@@ -44,6 +45,7 @@ export const OAUTH_DEFAULT_CLIENT_SCOPES: OAuthScope[] = [
   "openid",
   "profile",
   "email",
+  "offline_access",
   "posts:read",
 ];
 

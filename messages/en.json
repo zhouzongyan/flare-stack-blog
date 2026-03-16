@@ -1089,6 +1089,7 @@
   "settings_tab_email": "Email",
   "settings_tab_webhook": "Webhooks",
   "settings_tab_maintenance": "Maintenance",
+  "settings_tab_mcp": "MCP",
   "settings_site_title": "Personalization",
   "settings_site_desc": "Configure site and theme customization.",
   "settings_site_section_theme_title": "Theme",
@@ -1174,6 +1175,35 @@
   "settings_webhook_desc": "Forward admin notifications to your preferred platforms or automation systems.",
   "settings_maintenance_title": "System Maintenance",
   "settings_maintenance_desc": "Perform cleanup and maintenance operations to keep data stable.",
+  "settings_mcp_title": "MCP",
+  "settings_mcp_desc": "Review which AI clients are connected to your MCP server and adjust their granted scopes.",
+  "settings_mcp_connections_title": "Connected Clients",
+  "settings_mcp_connections_desc": "These are the AI tools and apps that have already completed OAuth authorization.",
+  "settings_mcp_connected_count": [
+    {
+      "declarations": ["input count"],
+      "match": {
+        "count=1": "1 connected client",
+        "count=*": "{count} connected clients"
+      }
+    }
+  ],
+  "settings_mcp_endpoint_label": "MCP Endpoint",
+  "settings_mcp_loading_connections": "Loading connected clients...",
+  "settings_mcp_empty_connections": "No clients have connected yet. Once Codex or another AI agent finishes OAuth authorization, it will appear here.",
+  "settings_mcp_toast_scopes_updated": "Client scopes updated",
+  "settings_mcp_toast_update_failed": "Failed to update scopes",
+  "settings_mcp_toast_disconnected": "Client disconnected",
+  "settings_mcp_toast_disconnect_failed": "Failed to disconnect client",
+  "settings_mcp_connection_unnamed": "Unnamed client",
+  "settings_mcp_connection_connected_at": "Connected: {date}",
+  "settings_mcp_connection_updated_at": "Last updated: {date}",
+  "settings_mcp_connection_disconnect_btn": "Disconnect",
+  "settings_mcp_connection_redirect_uris": "Redirect URIs",
+  "settings_mcp_connection_granted_scopes": "Granted Scopes",
+  "settings_mcp_connection_update_scopes_btn": "Update Scopes",
+  "settings_mcp_connection_disconnect_title": "Disconnect Client",
+  "settings_mcp_connection_disconnect_desc": "Disconnect {client}? This revokes the current OAuth authorization.",
   "settings_email_scope_title": "Notification Scope",
   "settings_email_scope_admin_label": "Admin Email Notifications",
   "settings_email_scope_admin_desc": "New comments, pending reviews, and friend link requests will be sent to the admin email.",
