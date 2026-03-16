@@ -53,7 +53,8 @@ function RouteComponent() {
         redirectURI?: string;
         url?: string;
       };
-      const redirectUrl = result.redirect_uri ?? result.redirectURI ?? result.url;
+      const redirectUrl =
+        result.redirect_uri ?? result.redirectURI ?? result.url;
 
       if (!redirectUrl) {
         throw new Error("Missing redirect URI");

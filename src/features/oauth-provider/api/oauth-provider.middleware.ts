@@ -10,7 +10,7 @@ import { verifyOAuthAccessToken } from "../service/oauth-provider.server-client"
 import {
   createOAuthPrincipal,
   extractBearerToken,
-  getOAuthProtectedResource,
+  getOAuthProtectedResourceMetadataUrl,
 } from "../service/oauth-provider.service";
 
 declare module "hono" {
@@ -74,7 +74,7 @@ export const oauthAccessTokenMiddleware = (
     if (!accessToken) {
       c.header(
         "WWW-Authenticate",
-        `Bearer resource_metadata="${getOAuthProtectedResource(c.req.url)}/.well-known/oauth-protected-resource"`,
+        `Bearer resource_metadata="${getOAuthProtectedResourceMetadataUrl(c.req.url)}"`,
       );
       return c.json(
         {

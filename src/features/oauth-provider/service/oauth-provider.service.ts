@@ -40,7 +40,14 @@ export function hasRequiredScopes(
 }
 
 export function getOAuthProtectedResource(requestUrl: string) {
-  return new URL(requestUrl).origin;
+  return new URL("/", requestUrl).toString();
+}
+
+export function getOAuthProtectedResourceMetadataUrl(requestUrl: string) {
+  return new URL(
+    "/.well-known/oauth-protected-resource",
+    requestUrl,
+  ).toString();
 }
 
 export function getOAuthAuthorizationServer(env: Env) {
@@ -86,13 +93,13 @@ export function createOAuthPrincipal(jwt: JWTPayload): OAuthPrincipal {
 
 export function getOAuthProtectedResourceMetadata(
   env: Env,
-  requestUrl: string,
+  _requestUrl: string,
 ): ResourceServerMetadata {
   return {
     authorization_servers: [getOAuthAuthorizationServer(env)],
     bearer_methods_supported: ["header"],
     jwks_uri: getOAuthJwksUrl(env),
-    resource: getOAuthProtectedResource(requestUrl),
+    resource: getOAuthProtectedResource(getOAuthAuthorizationServer(env)),
     scopes_supported: OAUTH_BLOG_SCOPES,
   };
 }

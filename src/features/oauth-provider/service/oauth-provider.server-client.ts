@@ -10,7 +10,7 @@ import {
 
 export async function verifyOAuthAccessToken(
   env: Env,
-  requestUrl: string,
+  _requestUrl: string,
   accessToken: string,
   requiredScopes: OAuthScope[] | OAuthScopeRequest = [],
 ) {
@@ -20,7 +20,7 @@ export async function verifyOAuthAccessToken(
     jwksUrl: getOAuthJwksUrl(env),
     scopes: normalizeRequiredScopes(requiredScopes),
     verifyOptions: {
-      audience: getOAuthProtectedResource(requestUrl),
+      audience: getOAuthProtectedResource(getOAuthAuthorizationServer(env)),
       issuer: getOAuthAuthorizationServer(env),
     },
   });

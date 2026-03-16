@@ -53,13 +53,19 @@ export const oauthJwtPlugin = jwt({
   },
 });
 
-export const oauthProviderPlugin = oauthProvider({
-  loginPage: OAUTH_PROVIDER_LOGIN_PAGE,
-  consentPage: OAUTH_PROVIDER_CONSENT_PAGE,
-  scopes: OAUTH_PROVIDER_SCOPES,
-  allowDynamicClientRegistration: true,
-  allowUnauthenticatedClientRegistration: true,
-  clientRegistrationDefaultScopes: OAUTH_DEFAULT_CLIENT_SCOPES,
-  clientRegistrationAllowedScopes: OAUTH_PROVIDER_SCOPES,
-  clientCredentialGrantDefaultScopes: OAUTH_DEFAULT_CLIENT_SCOPES,
-});
+export function createOAuthProviderPlugin(baseURL: string) {
+  return oauthProvider({
+    loginPage: OAUTH_PROVIDER_LOGIN_PAGE,
+    consentPage: OAUTH_PROVIDER_CONSENT_PAGE,
+    scopes: OAUTH_PROVIDER_SCOPES,
+    validAudiences: [new URL("/", baseURL).toString()],
+    allowDynamicClientRegistration: true,
+    allowUnauthenticatedClientRegistration: true,
+    clientRegistrationDefaultScopes: OAUTH_DEFAULT_CLIENT_SCOPES,
+    clientRegistrationAllowedScopes: OAUTH_PROVIDER_SCOPES,
+    clientCredentialGrantDefaultScopes: OAUTH_DEFAULT_CLIENT_SCOPES,
+    silenceWarnings: {
+      oauthAuthServerConfig: true,
+    },
+  });
+}

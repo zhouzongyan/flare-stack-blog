@@ -4,6 +4,7 @@ import {
   createOAuthPrincipal,
   extractBearerToken,
   getOAuthProtectedResource,
+  getOAuthProtectedResourceMetadataUrl,
   parseOAuthScopes,
 } from "./oauth-provider.service";
 
@@ -32,11 +33,18 @@ describe("oauth-provider service", () => {
   });
 
   it("derives the protected resource from request url", () => {
+    expect(getOAuthProtectedResource("https://blog.example.com/mcp")).toBe(
+      "https://blog.example.com/",
+    );
+    expect(getOAuthProtectedResource("https://blog.example.com/posts")).toBe(
+      "https://blog.example.com/",
+    );
+  });
+
+  it("builds the protected resource metadata url from the request url", () => {
     expect(
-      getOAuthProtectedResource(
-        "https://blog.example.com/api/integrations/posts",
-      ),
-    ).toBe("https://blog.example.com");
+      getOAuthProtectedResourceMetadataUrl("https://blog.example.com/mcp"),
+    ).toBe("https://blog.example.com/.well-known/oauth-protected-resource");
   });
 
   it("builds an oauth principal from jwt payload", () => {
