@@ -4,6 +4,7 @@ import { flattenBlogScopeGroups } from "./service/oauth-provider.scope";
 
 export const OAUTH_PROVIDER_LOGIN_PAGE = "/login";
 export const OAUTH_PROVIDER_CONSENT_PAGE = "/oauth/consent";
+export const OAUTH_JWKS_PATH = "/.well-known/jwks.json";
 
 const OAUTH_STANDARD_SCOPE_VALUES = [
   "openid",
@@ -46,19 +47,36 @@ export const OAUTH_DEFAULT_CLIENT_SCOPES: OAuthScope[] = [
   "posts:read",
 ];
 
-export const oauthJwtPlugin = jwt({
-  disableSettingJwtHeader: true,
-  jwks: {
-    jwksPath: "/.well-known/jwks.json",
-  },
-});
+export function getOAuthAuthorizationServerUrl(baseURL: string) {
+  return new URL("/api/auth", baseURL).toString();
+}
+
+export function getOAuthProtectedResourceUrl(baseURL: string) {
+  return new URL("/", baseURL).toString();
+}
+
+export function getOAuthJwksUrl(baseURL: string) {
+  return `${getOAuthAuthorizationServerUrl(baseURL)}${OAUTH_JWKS_PATH}`;
+}
+
+export function createOAuthJwtPlugin(baseURL: string) {
+  return jwt({
+    disableSettingJwtHeader: true,
+    jwks: {
+      jwksPath: OAUTH_JWKS_PATH,
+    },
+    jwt: {
+      issuer: getOAuthAuthorizationServerUrl(baseURL),
+    },
+  });
+}
 
 export function createOAuthProviderPlugin(baseURL: string) {
   return oauthProvider({
     loginPage: OAUTH_PROVIDER_LOGIN_PAGE,
     consentPage: OAUTH_PROVIDER_CONSENT_PAGE,
     scopes: OAUTH_PROVIDER_SCOPES,
-    validAudiences: [new URL("/", baseURL).toString()],
+    validAudiences: [getOAuthProtectedResourceUrl(baseURL)],
     allowDynamicClientRegistration: true,
     allowUnauthenticatedClientRegistration: true,
     clientRegistrationDefaultScopes: OAUTH_DEFAULT_CLIENT_SCOPES,

@@ -3,6 +3,9 @@ import type { JWTPayload } from "jose";
 import { serverEnv } from "@/lib/env/server.env";
 import type { OAuthScope } from "../oauth-provider.config";
 import {
+  getOAuthJwksUrl as getConfiguredOAuthJwksUrl,
+  getOAuthAuthorizationServerUrl,
+  getOAuthProtectedResourceUrl,
   OAUTH_BLOG_SCOPES,
   OAUTH_PROVIDER_SCOPES,
 } from "../oauth-provider.config";
@@ -51,11 +54,11 @@ export function getOAuthProtectedResourceMetadataUrl(requestUrl: string) {
 }
 
 export function getOAuthAuthorizationServer(env: Env) {
-  return serverEnv(env).BETTER_AUTH_URL;
+  return getOAuthAuthorizationServerUrl(serverEnv(env).BETTER_AUTH_URL);
 }
 
 export function getOAuthJwksUrl(env: Env) {
-  return `${getOAuthAuthorizationServer(env)}/.well-known/jwks.json`;
+  return getConfiguredOAuthJwksUrl(serverEnv(env).BETTER_AUTH_URL);
 }
 
 export function extractBearerToken(authorization?: string | null) {
@@ -95,11 +98,13 @@ export function getOAuthProtectedResourceMetadata(
   env: Env,
   _requestUrl: string,
 ): ResourceServerMetadata {
+  const baseURL = serverEnv(env).BETTER_AUTH_URL;
+
   return {
-    authorization_servers: [getOAuthAuthorizationServer(env)],
+    authorization_servers: [getOAuthAuthorizationServerUrl(baseURL)],
     bearer_methods_supported: ["header"],
-    jwks_uri: getOAuthJwksUrl(env),
-    resource: getOAuthProtectedResource(getOAuthAuthorizationServer(env)),
+    jwks_uri: getConfiguredOAuthJwksUrl(baseURL),
+    resource: getOAuthProtectedResourceUrl(baseURL),
     scopes_supported: OAUTH_BLOG_SCOPES,
   };
 }
