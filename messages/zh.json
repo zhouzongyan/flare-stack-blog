@@ -1382,6 +1382,7 @@
   "import_export_import_warning_scoped": "[{title}] {warning}",
   "import_export_import_error_zip_missing": "ZIP 文件未找到",
   "import_export_import_error_invalid_metadata": "无法解析文章元数据或元数据不符合规范",
+  "import_export_import_warning_content_json_invalid": "content.json 无效，已忽略",
   "import_export_import_warning_markdown_convert_failed": "Markdown 转换失败: {error}",
   "import_export_import_warning_image_upload_failed": "图片上传失败: {name}",
   "import_export_import_warning_image_missing": "图片未在 ZIP 中找到: {name}",

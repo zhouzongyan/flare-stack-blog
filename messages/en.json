@@ -1389,6 +1389,7 @@
   "import_export_import_warning_scoped": "[{title}] {warning}",
   "import_export_import_error_zip_missing": "ZIP file not found",
   "import_export_import_error_invalid_metadata": "Unable to parse post metadata or the metadata is invalid",
+  "import_export_import_warning_content_json_invalid": "content.json is invalid and was ignored",
   "import_export_import_warning_markdown_convert_failed": "Markdown conversion failed: {error}",
   "import_export_import_warning_image_upload_failed": "Image upload failed: {name}",
   "import_export_import_warning_image_missing": "Image not found in ZIP: {name}",
