@@ -44,3 +44,9 @@ export async function deleteOAuthConnection(
 
   return { success: true };
 }
+export async function getOAuthClientMetadata(
+  context: DbContext,
+  clientId: string,
+) {
+  return OAuthClientRepo.findOAuthClientByClientId(context.db, clientId);
+}

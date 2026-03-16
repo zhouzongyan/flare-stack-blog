@@ -20,6 +20,7 @@ export const OAuthConnectionSchema = z.object({
   consentId: z.string(),
   clientId: z.string(),
   clientName: z.string().nullable(),
+  clientIcon: z.string().nullable(),
   clientType: OAuthClientTypeSchema.nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -45,6 +46,7 @@ const IsoDateStringSchema = z
 export const OAuthClientInfoRowSchema = z.object({
   clientId: z.string(),
   clientName: z.string().nullable(),
+  clientIcon: z.string().nullable(),
   clientType: OAuthClientTypeSchema.nullable(),
   public: z.boolean(),
   redirectUris: JsonStringArraySchema,
@@ -69,9 +71,16 @@ export const DeleteOAuthConnectionInputSchema = z.object({
   consentId: z.string(),
 });
 
+export const GetOAuthClientMetadataInputSchema = z.object({
+  clientId: z.string(),
+});
+
 export type OAuthConnectionRecord = z.infer<typeof OAuthConnectionSchema>;
 export type OAuthClientInfoRow = z.infer<typeof OAuthClientInfoRowSchema>;
 export type OAuthConsentRow = z.infer<typeof OAuthConsentRowSchema>;
 export type RenameOAuthClientInput = z.infer<
   typeof RenameOAuthClientInputSchema
+>;
+export type GetOAuthClientMetadataInput = z.infer<
+  typeof GetOAuthClientMetadataInputSchema
 >;

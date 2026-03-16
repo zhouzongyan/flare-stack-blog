@@ -25,6 +25,7 @@ export async function listOAuthConnectionsByUserId(db: DB, userId: string) {
       const normalizedClient = OAuthClientInfoRowSchema.parse({
         clientId: client.clientId,
         clientName: client.name,
+        clientIcon: client.icon,
         clientType: client.type,
         public: client.public ?? false,
         redirectUris: client.redirectUris,
@@ -47,10 +48,28 @@ export async function listOAuthConnectionsByUserId(db: DB, userId: string) {
     return OAuthConnectionSchema.parse({
       ...normalizedConsent,
       clientName: client?.clientName ?? null,
+      clientIcon: client?.clientIcon ?? null,
       clientType: client?.clientType ?? null,
       public: client?.public ?? false,
       redirectUris: client?.redirectUris ?? [],
     });
+  });
+}
+
+export async function findOAuthClientByClientId(db: DB, clientId: string) {
+  const client = await db.query.oauthClient.findFirst({
+    where: eq(oauthClient.clientId, clientId),
+  });
+
+  if (!client) return null;
+
+  return OAuthClientInfoRowSchema.parse({
+    clientId: client.clientId,
+    clientName: client.name,
+    clientIcon: client.icon,
+    clientType: client.type,
+    public: client.public ?? false,
+    redirectUris: client.redirectUris,
   });
 }
 

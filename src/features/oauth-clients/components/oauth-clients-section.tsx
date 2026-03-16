@@ -1,4 +1,12 @@
-import { Check, Copy, Edit2, ExternalLink, Trash2, X } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Edit2,
+  ExternalLink,
+  ShieldCheck,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -124,7 +132,18 @@ function OAuthConnectionCard({
     <Card className="group border-border/20 bg-card/40 hover:border-border/40 transition-colors">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 p-6">
         <div className="space-y-1.5 flex-1 min-w-0 mr-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 shrink-0 rounded-lg bg-muted/40 border border-border/10 flex items-center justify-center overflow-hidden">
+              {connection.clientIcon ? (
+                <img
+                  src={connection.clientIcon}
+                  alt={connection.clientName ?? "Client"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <ShieldCheck className="h-4 w-4 text-muted-foreground/30" />
+              )}
+            </div>
             {isEditing ? (
               <div className="flex items-center gap-2 w-full max-w-sm">
                 <Input
@@ -167,7 +186,7 @@ function OAuthConnectionCard({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-6 w-6 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                   onClick={() => setIsEditing(true)}
                 >
                   <Edit2 className="h-3 w-3" />
@@ -183,7 +202,7 @@ function OAuthConnectionCard({
         <Button
           variant="destructive"
           size="icon"
-          className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-none"
+          className="h-8 w-8 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity rounded-lg sm:rounded-none"
           onClick={() => setDeleteOpen(true)}
         >
           <Trash2 className="h-4 w-4" />
