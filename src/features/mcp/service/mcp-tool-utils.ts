@@ -17,7 +17,10 @@ export function createScopeErrorResult(
   context: McpToolContext,
   requiredScopes: OAuthScopeRequest,
 ) {
-  const missingScopes = getMissingScopes(context.principal.scopes, requiredScopes);
+  const missingScopes = getMissingScopes(
+    context.principal.scopes,
+    requiredScopes,
+  );
 
   return {
     content: [
@@ -34,5 +37,7 @@ export function canAccessTool(
   context: McpToolContext,
   requiredScopes: OAuthScopeRequest,
 ) {
-  return getMissingScopes(context.principal.scopes, requiredScopes).length === 0;
+  return (
+    getMissingScopes(context.principal.scopes, requiredScopes).length === 0
+  );
 }

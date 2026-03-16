@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { output, ZodType } from "zod";
 import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
-import { canAccessTool, createScopeErrorResult } from "./mcp-tool-utils";
 import type { McpToolContext } from "./mcp.types";
+import { canAccessTool, createScopeErrorResult } from "./mcp-tool-utils";
 
 type McpToolTextContent = {
   type: "text";
@@ -40,11 +40,10 @@ interface McpToolWithInput<
   inputSchema: TInputSchema;
 }
 
-interface McpToolWithoutInput<TOutputSchema extends ZodType | undefined = ZodType>
-  extends McpToolBase<TOutputSchema> {
-  handler: (
-    context: McpToolContext,
-  ) => McpToolResult | Promise<McpToolResult>;
+interface McpToolWithoutInput<
+  TOutputSchema extends ZodType | undefined = ZodType,
+> extends McpToolBase<TOutputSchema> {
+  handler: (context: McpToolContext) => McpToolResult | Promise<McpToolResult>;
 }
 
 export type McpToolDefinition =
@@ -54,13 +53,12 @@ export type McpToolDefinition =
 export function defineMcpTool<
   TInputSchema extends ZodType,
   TOutputSchema extends ZodType | undefined = undefined,
->(tool: McpToolWithInput<TInputSchema, TOutputSchema>): McpToolWithInput<
-  TInputSchema,
-  TOutputSchema
->;
-export function defineMcpTool<TOutputSchema extends ZodType | undefined = undefined>(
-  tool: McpToolWithoutInput<TOutputSchema>,
-): McpToolWithoutInput<TOutputSchema>;
+>(
+  tool: McpToolWithInput<TInputSchema, TOutputSchema>,
+): McpToolWithInput<TInputSchema, TOutputSchema>;
+export function defineMcpTool<
+  TOutputSchema extends ZodType | undefined = undefined,
+>(tool: McpToolWithoutInput<TOutputSchema>): McpToolWithoutInput<TOutputSchema>;
 export function defineMcpTool(tool: McpToolDefinition): McpToolDefinition {
   return tool;
 }

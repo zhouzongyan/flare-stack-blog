@@ -1,5 +1,5 @@
-import { z } from "zod";
 import type { JWTPayload } from "jose";
+import { z } from "zod";
 import type { OAuthScope } from "../oauth-provider.config";
 import { OAUTH_BLOG_SCOPE_GROUPS } from "../oauth-provider.config";
 

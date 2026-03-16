@@ -16,9 +16,5 @@ export const authConfig = {
       maxAge: 5 * 60,
     },
   },
-  plugins: [
-    admin(),
-    oauthJwtPlugin,
-    oauthProviderPlugin,
-  ],
+  plugins: [admin(), oauthJwtPlugin, oauthProviderPlugin],
 } satisfies BetterAuthOptions;

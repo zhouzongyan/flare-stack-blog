@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { registerMcpTools } from "./mcp-tool-registry";
 import type { McpToolContext } from "./mcp.types";
+import { registerMcpTools } from "./mcp-tool-registry";
 
 export async function createMcpServer(
   context: McpToolContext,

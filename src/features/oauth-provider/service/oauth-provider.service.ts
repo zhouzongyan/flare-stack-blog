@@ -27,7 +27,9 @@ export function getMissingScopes(
   requiredScopes: OAuthScope[] | OAuthScopeRequest = [],
 ): OAuthScope[] {
   const normalizedRequiredScopes = normalizeRequiredScopes(requiredScopes);
-  return normalizedRequiredScopes.filter((scope) => !grantedScopes.includes(scope));
+  return normalizedRequiredScopes.filter(
+    (scope) => !grantedScopes.includes(scope),
+  );
 }
 
 export function hasRequiredScopes(

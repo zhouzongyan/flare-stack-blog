@@ -1,9 +1,9 @@
 import { z } from "zod";
+import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import {
   FindPostByIdInputSchema,
   PostSelectSchema,
 } from "@/features/posts/schema/posts.schema";
-import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import * as PostService from "@/features/posts/services/posts.service";
 import { TagSelectSchema } from "@/features/tags/tags.schema";
 import { defineMcpTool } from "../mcp-tool";
@@ -20,7 +20,8 @@ const PostsGetOutputSchema = PostSelectSchema.extend({
 
 export const postsGetTool = defineMcpTool({
   name: "posts.get",
-  description: "Get a single blog post by numeric ID, including tags and sync metadata.",
+  description:
+    "Get a single blog post by numeric ID, including tags and sync metadata.",
   requiredScopes: POSTS_GET_REQUIRED_SCOPES,
   inputSchema: FindPostByIdInputSchema,
   outputSchema: PostsGetOutputSchema,

@@ -33,7 +33,9 @@ describe("oauth-provider service", () => {
 
   it("derives the protected resource from request url", () => {
     expect(
-      getOAuthProtectedResource("https://blog.example.com/api/integrations/posts"),
+      getOAuthProtectedResource(
+        "https://blog.example.com/api/integrations/posts",
+      ),
     ).toBe("https://blog.example.com");
   });
 

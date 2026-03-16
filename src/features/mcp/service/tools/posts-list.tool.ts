@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { GetPostsInputSchema, PostItemSchema } from "@/features/posts/schema/posts.schema";
 import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
+import {
+  GetPostsInputSchema,
+  PostItemSchema,
+} from "@/features/posts/schema/posts.schema";
 import * as PostService from "@/features/posts/services/posts.service";
 import { defineMcpTool } from "../mcp-tool";
 
@@ -14,7 +17,8 @@ const PostsListOutputSchema = z.object({
 
 export const postsListTool = defineMcpTool({
   name: "posts.list",
-  description: "List blog posts with optional filters for admin-style management.",
+  description:
+    "List blog posts with optional filters for admin-style management.",
   requiredScopes: POSTS_LIST_REQUIRED_SCOPES,
   inputSchema: GetPostsInputSchema,
   outputSchema: PostsListOutputSchema,

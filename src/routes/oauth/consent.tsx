@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const consentSearchSchema = z.object({
   client_id: z.string().optional(),
-  oauth_query: z.string().optional(),
+  redirect_uri: z.string().optional(),
   scope: z.string().optional(),
 });
 
@@ -29,6 +29,8 @@ function RouteComponent() {
     setError(null);
 
     try {
+      const oauthQuery = window.location.search.slice(1);
+
       const response = await fetch("/api/auth/oauth2/consent", {
         method: "POST",
         headers: {
@@ -37,7 +39,7 @@ function RouteComponent() {
         },
         body: JSON.stringify({
           accept,
-          oauth_query: search.oauth_query,
+          oauth_query: oauthQuery,
         }),
       });
 
@@ -46,12 +48,18 @@ function RouteComponent() {
         throw new Error(message || "Consent failed");
       }
 
-      const result = (await response.json()) as { redirectURI?: string };
-      if (!result.redirectURI) {
+      const result = (await response.json()) as {
+        redirect_uri?: string;
+        redirectURI?: string;
+        url?: string;
+      };
+      const redirectUrl = result.redirect_uri ?? result.redirectURI ?? result.url;
+
+      if (!redirectUrl) {
         throw new Error("Missing redirect URI");
       }
 
-      window.location.assign(result.redirectURI);
+      window.location.assign(redirectUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Consent failed");
       setIsPending(false);

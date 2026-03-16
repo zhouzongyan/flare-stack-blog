@@ -7,9 +7,11 @@ import type {
 import type { OAuthScopeRequest } from "../schema/oauth-provider.schema";
 
 function typedEntries<T extends Record<string, unknown>>(obj: T) {
-  return Object.entries(obj) as Array<{
-    [K in keyof T & string]: [K, T[K]];
-  }[keyof T & string]>;
+  return Object.entries(obj) as Array<
+    {
+      [K in keyof T & string]: [K, T[K]];
+    }[keyof T & string]
+  >;
 }
 
 function toBlogScope<R extends OAuthBlogResource>(

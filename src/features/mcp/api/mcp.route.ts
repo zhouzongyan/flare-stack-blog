@@ -1,3 +1,4 @@
+import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
 import type { Context } from "hono";
 import { Hono } from "hono";
 import { oauthAccessTokenMiddleware } from "@/features/oauth-provider/api/oauth-provider.middleware";
@@ -5,7 +6,6 @@ import { extractBearerToken } from "@/features/oauth-provider/service/oauth-prov
 import { getServiceContext } from "@/lib/hono/helper";
 import { baseMiddleware } from "@/lib/hono/middlewares";
 import { createMcpServer } from "../service/mcp.server";
-import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
 
 const app = new Hono<{ Bindings: Env }>();
 

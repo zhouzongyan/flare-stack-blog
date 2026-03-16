@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { defineMcpTool, registerMcpTool } from "./mcp-tool";
 import type { McpToolContext } from "./mcp.types";
+import { defineMcpTool, registerMcpTool } from "./mcp-tool";
 
 function createMcpToolContext(
   scopes: McpToolContext["principal"]["scopes"] = ["posts:read"],

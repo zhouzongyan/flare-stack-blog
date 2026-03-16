@@ -3,8 +3,8 @@ import {
   oauthProviderOpenIdConfigMetadata,
 } from "@better-auth/oauth-provider";
 import { Hono } from "hono";
-import { getOAuthProtectedResourceMetadata } from "../service/oauth-provider.service";
 import { baseMiddleware } from "@/lib/hono/middlewares";
+import { getOAuthProtectedResourceMetadata } from "../service/oauth-provider.service";
 
 const app = new Hono<{ Bindings: Env }>();
 
