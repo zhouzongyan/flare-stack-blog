@@ -30,6 +30,9 @@ export type OAuthBlogScope = {
   [R in OAuthBlogResource]: `${R}:${OAuthBlogAction<R>}`;
 }[OAuthBlogResource];
 export type OAuthScope = OAuthStandardScope | OAuthBlogScope;
+export type OAuthBlogScopeSelection = Partial<{
+  [R in OAuthBlogResource]: readonly OAuthBlogAction<R>[];
+}>;
 
 export const OAUTH_STANDARD_SCOPES = [...OAUTH_STANDARD_SCOPE_VALUES];
 export const OAUTH_BLOG_SCOPES = flattenBlogScopeGroups(
@@ -41,12 +44,16 @@ export const OAUTH_PROVIDER_SCOPES: OAuthScope[] = [
   ...OAUTH_BLOG_SCOPES,
 ];
 
+export const OAUTH_DEFAULT_BLOG_SCOPE_SELECTION = {
+  posts: ["read", "write"],
+  comments: ["read", "write"],
+  media: ["read", "write"],
+  settings: ["read", "write"],
+} as const satisfies OAuthBlogScopeSelection;
+
 export const OAUTH_DEFAULT_CLIENT_SCOPES: OAuthScope[] = [
-  "openid",
-  "profile",
-  "email",
-  "offline_access",
-  "posts:read",
+  ...OAUTH_STANDARD_SCOPE_VALUES,
+  ...flattenBlogScopeGroups(OAUTH_DEFAULT_BLOG_SCOPE_SELECTION),
 ];
 
 export function getOAuthAuthorizationServerUrl(baseURL: string) {

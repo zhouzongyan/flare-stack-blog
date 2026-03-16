@@ -3,8 +3,8 @@ import type {
   OAuthBlogResource,
   OAuthBlogScope,
   OAuthBlogScopeGroups,
+  OAuthBlogScopeSelection,
 } from "../oauth-provider.config";
-import type { OAuthScopeRequest } from "../schema/oauth-provider.schema";
 
 function typedEntries<T extends Record<string, unknown>>(obj: T) {
   return Object.entries(obj) as Array<
@@ -22,15 +22,15 @@ function toBlogScope<R extends OAuthBlogResource>(
 }
 
 export function flattenBlogScopeGroups(
-  scopeGroups: OAuthBlogScopeGroups,
+  scopeGroups: OAuthBlogScopeGroups | OAuthBlogScopeSelection,
 ): OAuthBlogScope[] {
   return typedEntries(scopeGroups).flatMap(([resource, actions]) =>
-    actions.map((action) => toBlogScope(resource, action)),
+    (actions ?? []).map((action) => toBlogScope(resource, action)),
   );
 }
 
 export function flattenScopeRequest(
-  scopeRequest: OAuthScopeRequest,
+  scopeRequest: OAuthBlogScopeSelection,
 ): OAuthBlogScope[] {
   return typedEntries(scopeRequest).flatMap(([resource, actions]) =>
     (actions ?? []).map((action) => toBlogScope(resource, action)),
