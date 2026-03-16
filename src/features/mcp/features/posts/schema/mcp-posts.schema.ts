@@ -99,3 +99,41 @@ export const McpPostUpdateInputSchema = z
       message: "At least one field must be provided.",
     },
   );
+
+export const McpPostSetVisibilityInputSchema = z.object({
+  id: z.number().describe("Numeric post ID."),
+  visibility: z
+    .enum(POST_STATUSES)
+    .describe(
+      "Target visibility. Use 'published' to publish or 'draft' to unpublish.",
+    ),
+  publishedAt: z.iso
+    .datetime()
+    .nullable()
+    .optional()
+    .describe(
+      "Optional publish timestamp to save before queuing the publish workflow. Use null to clear it.",
+    ),
+  clientToday: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional()
+    .describe(
+      "Current local date in YYYY-MM-DD. Optional; defaults to the server date.",
+    ),
+});
+
+export const McpPostSetVisibilityOutputSchema = z.object({
+  id: z.number().describe("Numeric post ID."),
+  operation: z
+    .enum(["publish", "unpublish"])
+    .describe("The visibility action that was queued."),
+  publishedAt: z.iso
+    .datetime()
+    .nullable()
+    .describe("Current publish timestamp after queuing the workflow."),
+  status: z.enum(POST_STATUSES).describe("Current stored post status."),
+  workflowQueued: z
+    .literal(true)
+    .describe("Whether the publish workflow was queued."),
+});
