@@ -8,7 +8,7 @@ const POSTS_CREATE_DRAFT_REQUIRED_SCOPES: OAuthScopeRequest = {
 };
 
 export const postsCreateDraftTool = defineMcpTool({
-  name: "posts.createDraft",
+  name: "posts_create_draft",
   description: "Create a new empty draft post and return its numeric ID.",
   requiredScopes: POSTS_CREATE_DRAFT_REQUIRED_SCOPES,
   outputSchema: McpPostCreateDraftOutputSchema,

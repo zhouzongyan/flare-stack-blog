@@ -1,3 +1,5 @@
+import { convertToPlainText } from "@/features/posts/utils/content";
+
 type DateLike = Date | string | null | undefined;
 
 function toIsoString(value: DateLike) {
@@ -71,7 +73,9 @@ export function serializeMcpPostDetail(post: {
 }) {
   return {
     ...serializeMcpPostListItem(post),
-    contentJson: post.contentJson ?? null,
+    contentText: convertToPlainText(
+      post.contentJson as Parameters<typeof convertToPlainText>[0],
+    ),
     hasPublicCache: post.hasPublicCache,
     isSynced: post.isSynced,
   };

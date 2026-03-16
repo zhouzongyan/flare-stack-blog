@@ -12,7 +12,7 @@ const POSTS_LIST_REQUIRED_SCOPES: OAuthScopeRequest = {
 };
 
 export const postsListTool = defineMcpTool({
-  name: "posts.list",
+  name: "posts_list",
   description:
     "List blog posts with optional filters for admin-style management.",
   requiredScopes: POSTS_LIST_REQUIRED_SCOPES,

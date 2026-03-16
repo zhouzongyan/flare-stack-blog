@@ -2,7 +2,7 @@ import { z } from "zod";
 import { POST_STATUSES } from "@/lib/db/schema";
 
 export const McpTagSchema = z.object({
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
   id: z.number(),
   name: z.string(),
 });
@@ -18,21 +18,18 @@ export const McpPostsListInputSchema = z.object({
 });
 
 export const McpPostSummarySchema = z.object({
-  contentJson: z.unknown().nullable(),
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
   id: z.number(),
-  publishedAt: z.string().datetime().nullable(),
+  publishedAt: z.iso.datetime().nullable(),
   readTimeInMinutes: z.number(),
   slug: z.string(),
   status: z.enum(POST_STATUSES),
   summary: z.string().nullable(),
   title: z.string(),
-  updatedAt: z.string().datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
-export const McpPostListItemSchema = McpPostSummarySchema.omit({
-  contentJson: true,
-}).extend({
+export const McpPostListItemSchema = McpPostSummarySchema.extend({
   tags: z.array(McpTagSchema).optional(),
 });
 
@@ -45,6 +42,7 @@ export const McpPostByIdInputSchema = z.object({
 });
 
 export const McpPostDetailSchema = McpPostSummarySchema.extend({
+  contentText: z.string(),
   hasPublicCache: z.boolean(),
   isSynced: z.boolean(),
   tags: z.array(McpTagSchema).optional(),
