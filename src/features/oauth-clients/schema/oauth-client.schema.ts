@@ -28,9 +28,41 @@ export const OAuthConnectionSchema = z.object({
   scopes: OAuthScopeListSchema,
 });
 
-export const UpdateOAuthConnectionScopesInputSchema = z.object({
+const JsonStringArraySchema = z.preprocess((value) => {
+  if (typeof value !== "string") return value;
+
+  try {
+    return JSON.parse(value) as unknown;
+  } catch {
+    return value;
+  }
+}, z.array(z.string()));
+
+const IsoDateStringSchema = z
+  .union([z.date(), z.string()])
+  .transform((value) => (value instanceof Date ? value.toISOString() : value));
+
+export const OAuthClientInfoRowSchema = z.object({
+  clientId: z.string(),
+  clientName: z.string().nullable(),
+  clientType: OAuthClientTypeSchema.nullable(),
+  public: z.boolean(),
+  redirectUris: JsonStringArraySchema,
+});
+
+export const OAuthConsentRowSchema = z.object({
   consentId: z.string(),
-  scopes: OAuthScopeListSchema.min(1),
+  clientId: z.string(),
+  createdAt: IsoDateStringSchema,
+  updatedAt: IsoDateStringSchema,
+  scopes: OAuthScopeListSchema.or(
+    JsonStringArraySchema.pipe(OAuthScopeListSchema),
+  ),
+});
+
+export const RenameOAuthClientInputSchema = z.object({
+  clientId: z.string(),
+  clientName: z.string().trim().min(1).max(120),
 });
 
 export const DeleteOAuthConnectionInputSchema = z.object({
@@ -38,6 +70,8 @@ export const DeleteOAuthConnectionInputSchema = z.object({
 });
 
 export type OAuthConnectionRecord = z.infer<typeof OAuthConnectionSchema>;
-export type UpdateOAuthConnectionScopesInput = z.infer<
-  typeof UpdateOAuthConnectionScopesInputSchema
+export type OAuthClientInfoRow = z.infer<typeof OAuthClientInfoRowSchema>;
+export type OAuthConsentRow = z.infer<typeof OAuthConsentRowSchema>;
+export type RenameOAuthClientInput = z.infer<
+  typeof RenameOAuthClientInputSchema
 >;

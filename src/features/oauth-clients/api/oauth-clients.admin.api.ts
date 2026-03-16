@@ -1,29 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
 import { adminMiddleware } from "@/lib/middlewares";
 import {
   DeleteOAuthConnectionInputSchema,
-  UpdateOAuthConnectionScopesInputSchema,
+  RenameOAuthClientInputSchema,
 } from "../schema/oauth-client.schema";
 import * as OAuthClientService from "../service/oauth-client.service";
 
 export const getOAuthConnectionsFn = createServerFn()
   .middleware([adminMiddleware])
-  .handler(({ context }) =>
-    OAuthClientService.listOAuthConnections(context.auth, getRequestHeaders()),
-  );
+  .handler(({ context }) => OAuthClientService.listOAuthConnections(context));
 
-export const updateOAuthConnectionScopesFn = createServerFn({
+export const renameOAuthClientFn = createServerFn({
   method: "POST",
 })
   .middleware([adminMiddleware])
-  .inputValidator(UpdateOAuthConnectionScopesInputSchema)
+  .inputValidator(RenameOAuthClientInputSchema)
   .handler(({ context, data }) =>
-    OAuthClientService.updateOAuthConnectionScopes(
-      context.auth,
-      data,
-      getRequestHeaders(),
-    ),
+    OAuthClientService.renameOAuthClient(context, data),
   );
 
 export const deleteOAuthConnectionFn = createServerFn({
@@ -32,9 +25,5 @@ export const deleteOAuthConnectionFn = createServerFn({
   .middleware([adminMiddleware])
   .inputValidator(DeleteOAuthConnectionInputSchema)
   .handler(({ context, data }) =>
-    OAuthClientService.deleteOAuthConnection(
-      context.auth,
-      data.consentId,
-      getRequestHeaders(),
-    ),
+    OAuthClientService.deleteOAuthConnection(context, data.consentId),
   );

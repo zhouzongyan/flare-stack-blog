@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { m } from "@/paraglide/messages";
 import {
   deleteOAuthConnectionFn,
-  updateOAuthConnectionScopesFn,
+  renameOAuthClientFn,
 } from "../api/oauth-clients.admin.api";
 import { OAUTH_CONNECTION_KEYS, oauthConnectionsQuery } from "../queries";
 
@@ -12,20 +14,40 @@ export function useOAuthClients() {
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: OAUTH_CONNECTION_KEYS.list });
 
-  const updateMutation = useMutation({
-    mutationFn: updateOAuthConnectionScopesFn,
+  const renameMutation = useMutation({
+    mutationFn: renameOAuthClientFn,
+    meta: {
+      skipGlobalErrorToast: true,
+    },
     onSuccess: invalidate,
+    onError: (error) => {
+      toast.error(
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : m.settings_mcp_toast_rename_failed(),
+      );
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteOAuthConnectionFn,
+    meta: {
+      skipGlobalErrorToast: true,
+    },
     onSuccess: invalidate,
+    onError: (error) => {
+      toast.error(
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : m.settings_mcp_toast_disconnect_failed(),
+      );
+    },
   });
 
   return {
     connections: connectionsQuery.data ?? [],
-    deleteConnection: deleteMutation.mutateAsync,
+    deleteConnection: deleteMutation.mutate,
     isLoading: connectionsQuery.isLoading,
-    updateConnectionScopes: updateMutation.mutateAsync,
+    renameClient: renameMutation.mutate,
   };
 }

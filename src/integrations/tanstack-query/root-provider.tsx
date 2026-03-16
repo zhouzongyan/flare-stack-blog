@@ -12,7 +12,13 @@ export function getContext() {
       onError: handleServerError,
     }),
     mutationCache: new MutationCache({
-      onError: handleServerError,
+      onError: (error, _variables, _context, mutation) => {
+        if (mutation.meta?.skipGlobalErrorToast) {
+          return;
+        }
+
+        handleServerError(error);
+      },
     }),
     defaultOptions: {
       queries: {

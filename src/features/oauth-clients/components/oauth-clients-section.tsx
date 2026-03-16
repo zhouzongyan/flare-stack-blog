@@ -3,81 +3,37 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import ConfirmationModal from "@/components/ui/confirmation-modal";
-import {
-  OAUTH_MANAGED_SCOPES,
-  OAUTH_PROVIDER_SCOPES,
-} from "@/features/oauth-provider/oauth-provider.config";
+import { Input } from "@/components/ui/input";
+import { OAUTH_MANAGED_SCOPES } from "@/features/oauth-provider/oauth-provider.config";
 import { formatDate } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 import { useOAuthClients } from "../hooks/use-oauth-clients";
 import type {
   OAuthConnectionRecord,
-  UpdateOAuthConnectionScopesInput,
+  RenameOAuthClientInput,
 } from "../schema/oauth-client.schema";
 
-function splitScopes(scopes: string[]) {
-  const managed = scopes.filter((scope) =>
+function getManagedScopes(scopes: string[]) {
+  return scopes.filter((scope) =>
     OAUTH_MANAGED_SCOPES.includes(
       scope as (typeof OAUTH_MANAGED_SCOPES)[number],
     ),
-  );
-  const system = scopes.filter((scope) => !managed.includes(scope));
-
-  return { managed, system };
-}
-
-function ScopeChecklist({
-  scopes,
-  onChange,
-}: {
-  scopes: string[];
-  onChange: (next: string[]) => void;
-}) {
-  return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {OAUTH_MANAGED_SCOPES.map((scope) => {
-        const checked = scopes.includes(scope);
-        return (
-          <label
-            key={scope}
-            className="flex items-center gap-3 border border-border/20 bg-muted/10 px-3 py-2 text-sm"
-          >
-            <Checkbox
-              checked={checked}
-              onCheckedChange={(nextChecked) => {
-                onChange(
-                  nextChecked
-                    ? [...new Set([...scopes, scope])]
-                    : scopes.filter((item) => item !== scope),
-                );
-              }}
-            />
-            <span className="font-mono text-[11px] uppercase tracking-[0.15em]">
-              {scope}
-            </span>
-          </label>
-        );
-      })}
-    </div>
   );
 }
 
 function OAuthConnectionCard({
   connection,
   onDelete,
-  onSave,
+  onRename,
 }: {
   connection: OAuthConnectionRecord;
-  onDelete: (consentId: string) => Promise<void>;
-  onSave: (input: UpdateOAuthConnectionScopesInput) => Promise<void>;
+  onDelete: (consentId: string) => void;
+  onRename: (input: RenameOAuthClientInput) => void;
 }) {
-  const { managed: managedScopes, system: systemScopes } = splitScopes(
-    connection.scopes,
-  );
-  const [scopes, setScopes] = useState<string[]>(managedScopes);
+  const [clientName, setClientName] = useState(connection.clientName ?? "");
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const managedScopes = getManagedScopes(connection.scopes);
 
   return (
     <div className="space-y-6 border border-border/20 bg-muted/5 p-6">
@@ -126,6 +82,30 @@ function OAuthConnectionCard({
         </Button>
       </div>
 
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          {m.settings_mcp_connection_name_label()}
+        </label>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Input
+            value={clientName}
+            onChange={(event) => setClientName(event.target.value)}
+          />
+          <Button
+            type="button"
+            onClick={() =>
+              onRename({
+                clientId: connection.clientId,
+                clientName: clientName.trim(),
+              })
+            }
+            className="rounded-none text-[10px] font-mono uppercase tracking-[0.2em]"
+          >
+            {m.settings_mcp_connection_rename_btn()}
+          </Button>
+        </div>
+      </div>
+
       {connection.redirectUris.length > 0 ? (
         <div className="space-y-2">
           <label className="text-sm font-medium">
@@ -148,26 +128,19 @@ function OAuthConnectionCard({
         <label className="text-sm font-medium">
           {m.settings_mcp_connection_granted_scopes()}
         </label>
-        <ScopeChecklist scopes={scopes} onChange={setScopes} />
-      </div>
-
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          onClick={() =>
-            onSave({
-              consentId: connection.consentId,
-              scopes: [...systemScopes, ...scopes].filter((scope) =>
-                OAUTH_PROVIDER_SCOPES.includes(
-                  scope as (typeof OAUTH_PROVIDER_SCOPES)[number],
-                ),
-              ) as UpdateOAuthConnectionScopesInput["scopes"],
-            })
-          }
-          className="rounded-none text-[10px] font-mono uppercase tracking-[0.2em]"
-        >
-          {m.settings_mcp_connection_update_scopes_btn()}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          {managedScopes.length > 0 ? (
+            managedScopes.map((scope) => (
+              <Badge key={scope} variant="secondary" className="rounded-none">
+                {scope}
+              </Badge>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {m.settings_mcp_connection_no_business_scopes()}
+            </p>
+          )}
+        </div>
       </div>
 
       <ConfirmationModal
@@ -189,7 +162,7 @@ function OAuthConnectionCard({
 }
 
 export function OAuthClientsSection() {
-  const { connections, deleteConnection, isLoading, updateConnectionScopes } =
+  const { connections, deleteConnection, isLoading, renameClient } =
     useOAuthClients();
   const [baseUrl] = useState(() =>
     typeof window === "undefined" ? "" : window.location.origin,
@@ -201,33 +174,26 @@ export function OAuthClientsSection() {
 
   const mcpEndpoint = baseUrl ? `${baseUrl}/mcp` : "/mcp";
 
-  const handleUpdateScopes = async (
-    input: UpdateOAuthConnectionScopesInput,
-  ) => {
-    try {
-      await updateConnectionScopes({ data: input });
-      toast.success(m.settings_mcp_toast_scopes_updated());
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : m.settings_mcp_toast_update_failed(),
-      );
-    }
+  const handleRename = (input: RenameOAuthClientInput) => {
+    renameClient(
+      { data: input },
+      {
+        onSuccess: () => {
+          toast.success(m.settings_mcp_toast_client_renamed());
+        },
+      },
+    );
   };
 
-  const handleDelete = async (consentId: string) => {
-    try {
-      await deleteConnection({ data: { consentId } });
-      toast.success(m.settings_mcp_toast_disconnected());
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : m.settings_mcp_toast_disconnect_failed(),
-      );
-      throw error;
-    }
+  const handleDelete = (consentId: string) => {
+    deleteConnection(
+      { data: { consentId } },
+      {
+        onSuccess: () => {
+          toast.success(m.settings_mcp_toast_disconnected());
+        },
+      },
+    );
   };
 
   return (
@@ -267,7 +233,7 @@ export function OAuthClientsSection() {
                 key={connection.consentId}
                 connection={connection}
                 onDelete={handleDelete}
-                onSave={handleUpdateScopes}
+                onRename={handleRename}
               />
             ))
           ) : (
