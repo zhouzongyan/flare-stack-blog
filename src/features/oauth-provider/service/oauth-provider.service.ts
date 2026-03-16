@@ -22,6 +22,21 @@ export function normalizeRequiredScopes(
     : flattenScopeRequest(requiredScopes);
 }
 
+export function getMissingScopes(
+  grantedScopes: OAuthScope[],
+  requiredScopes: OAuthScope[] | OAuthScopeRequest = [],
+): OAuthScope[] {
+  const normalizedRequiredScopes = normalizeRequiredScopes(requiredScopes);
+  return normalizedRequiredScopes.filter((scope) => !grantedScopes.includes(scope));
+}
+
+export function hasRequiredScopes(
+  grantedScopes: OAuthScope[],
+  requiredScopes: OAuthScope[] | OAuthScopeRequest = [],
+) {
+  return getMissingScopes(grantedScopes, requiredScopes).length === 0;
+}
+
 export function getOAuthProtectedResource(requestUrl: string) {
   return new URL(requestUrl).origin;
 }

@@ -7,8 +7,8 @@ import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { exportDownloadRoute } from "@/features/import-export/api/hono/download.route";
 import { handleImageRequest } from "@/features/media/service/media.service";
+import mcpRoute from "@/features/mcp/api/mcp.route";
 import postsDetailRoute from "@/features/posts/api/hono/posts.detail.route";
-import postsIntegrationRoute from "@/features/posts/api/hono/posts.integration.route";
 import postsListRoute from "@/features/posts/api/hono/posts.list.route";
 import postsRelatedRoute from "@/features/posts/api/hono/posts.related.route";
 import searchRoute from "@/features/search/api/hono/search.route";
@@ -41,7 +41,7 @@ const publicApi = new Hono<{ Bindings: Env }>()
 // Mount public API
 app.route("/api", publicApi);
 
-app.route("/api/integrations/posts", postsIntegrationRoute);
+app.route("/mcp", mcpRoute);
 
 // Export type for RPC client
 export type PublicApiType = typeof publicApi;

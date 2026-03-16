@@ -1,0 +1,69 @@
+import type { Context } from "hono";
+import { Hono } from "hono";
+import { oauthAccessTokenMiddleware } from "@/features/oauth-provider/api/oauth-provider.middleware";
+import { extractBearerToken } from "@/features/oauth-provider/service/oauth-provider.service";
+import { getServiceContext } from "@/lib/hono/helper";
+import { baseMiddleware } from "@/lib/hono/middlewares";
+import { createMcpServer } from "../service/mcp.server";
+import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+
+const app = new Hono<{ Bindings: Env }>();
+
+app.use("*", baseMiddleware);
+app.use("*", oauthAccessTokenMiddleware());
+
+function getMcpAuthInfo(c: Context<{ Bindings: Env }>): AuthInfo {
+  const principal = c.get("oauthPrincipal");
+  const accessToken = extractBearerToken(c.req.header("authorization")) ?? "";
+
+  return {
+    clientId: principal.clientId ?? "unknown-client",
+    extra: {
+      subject: principal.subject,
+    },
+    scopes: principal.scopes,
+    token: accessToken,
+  };
+}
+
+function isAllowedMcpOrigin(c: Context<{ Bindings: Env }>) {
+  const origin = c.req.header("origin");
+  if (!origin) return true;
+
+  const requestOrigin = new URL(c.req.url).origin;
+  return origin === requestOrigin;
+}
+
+const route = app.all("/", async (c) => {
+  if (!isAllowedMcpOrigin(c)) {
+    return c.json(
+      {
+        code: "INVALID_ORIGIN",
+        message: "Invalid Origin header",
+      },
+      403,
+    );
+  }
+
+  const server = await createMcpServer({
+    ...getServiceContext(c),
+    principal: c.get("oauthPrincipal"),
+  });
+
+  const { WebStandardStreamableHTTPServerTransport } = await import(
+    "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
+  );
+
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    enableJsonResponse: true,
+    sessionIdGenerator: undefined,
+  });
+
+  await server.connect(transport);
+
+  return transport.handleRequest(c.req.raw, {
+    authInfo: getMcpAuthInfo(c),
+  });
+});
+
+export default route;
